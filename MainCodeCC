@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glassmorphism + Skeuomorphism + Fluent Design</title>
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.28);
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.72);
+      --accent: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0f172a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Vibrant Background Orbs (Shows off Glassmorphism blur) */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 320px;
+      height: 320px;
+      background: #ec4899;
+      top: 15%;
+      left: 25%;
+    }
+    .orb-2 {
+      width: 360px;
+      height: 360px;
+      background: #3b82f6;
+      bottom: 12%;
+      right: 22%;
+    }
+    .orb-3 {
+      width: 240px;
+      height: 240px;
+      background: #8b5cf6;
+      top: 45%;
+      left: 48%;
+    }
+
+    /* GLASSMORPHISM + FLUENT DESIGN CARD */
+    .fluent-glass-card {
+      position: relative;
+      z-index: 1;
+      width: 340px;
+      padding: 28px;
+      border-radius: 24px;
+      /* Glassmorphism blur & translucency */
+      background: var(--glass-bg);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      /* Specular top-left edge highlight */
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
+      border-left: 1px solid rgba(255, 255, 255, 0.4);
+      /* Fluent Z-axis depth shadow */
+      box-shadow: 
+        0 24px 48px rgba(0, 0, 0, 0.45),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25);
+      overflow: hidden;
+      color: var(--text-main);
+    }
+
+    /* Fluent Acrylic Noise Texture Overlay */
+    .acrylic-noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.05;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://w3.org id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Fluent Reveal Hover Light */
+    .reveal-light {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle 160px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 255, 255, 0.16),
+        transparent 80%
+      );
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .fluent-glass-card:hover .reveal-light {
+      opacity: 1;
+    }
+
+    /* Header Section */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* SKEUOMORPHIC PHYSICAL LED INDICATOR */
+    .led-housing {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.15);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .led-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #475569;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+      transition: all 0.2s ease;
+    }
+    .led-dot.active {
+      background: #38bdf8;
+      box-shadow: 0 0 10px #38bdf8, inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    /* SKEUOMORPHIC RECESSED SLIDER */
+    .control-group {
+      margin-bottom: 26px;
+    }
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    input[type="range"].skeuo-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      /* Recessed physical groove */
+      background: rgba(15, 23, 42, 0.55);
+      box-shadow: 
+        inset 0 2px 5px rgba(0, 0, 0, 0.7),
+        0 1px 1px rgba(255, 255, 255, 0.2);
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Metallic Brushed Thumb */
+    input[type="range"].skeuo-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f8fafc, #94a3b8);
+      border: 1px solid #ffffff;
+      box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.9),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+      cursor: grab;
+      transition: transform 0.1s ease;
+    }
+    input[type="range"].skeuo-slider::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.08);
+    }
+
+    /* SKEUOMORPHIC TACTILE BUTTONS */
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .skeuo-btn {
+      padding: 13px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      /* Raised convex metallic/acrylic surface */
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 100%);
+      color: #ffffff;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+      transition: all 0.12s ease;
+    }
+
+    .skeuo-btn:hover {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.1) 100%);
+    }
+
+    /* Physical Depressed State */
+    .skeuo-btn:active,
+    .skeuo-btn.pressed {
+      transform: translateY(2px);
+      background: rgba(15, 23, 42, 0.45);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        inset 0 3px 7px rgba(0, 0, 0, 0.65),
+        0 1px 1px rgba(255, 255, 255, 0.15);
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Colorful Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Hybrid UI Widget -->
+  <div class="fluent-glass-card" id="card">
+    <div class="acrylic-noise"></div>
+    <div class="reveal-light"></div>
+
+    <div class="header">
+      <div>
+        <h2>Studio DAC Amp</h2>
+        <p>Tactile Glass Interface</p>
+      </div>
+      <div class="led-housing">
+        <span class="led-dot active" id="led"></span>
+        <span id="statusText">ON</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="label-row">
+        <span>Master Output</span>
+        <span id="volValue">68%</span>
+      </div>
+      <input type="range" min="0" max="100" value="68" class="skeuo-slider" id="volSlider" />
+    </div>
+
+    <div class="button-row">
+      <button class="skeuo-btn pressed" id="powerBtn">Power</button>
+      <button class="skeuo-btn" id="bassBtn">Bass Boost</button>
+    </div>
+  </div>
+
+  <script>
+    const card = document.getElementById('card');
+    const volSlider = document.getElementById('volSlider');
+    const volValue = document.getElementById('volValue');
+    const powerBtn = document.getElementById('powerBtn');
+    const bassBtn = document.getElementById('bassBtn');
+    const led = document.getElementById('led');
+    const statusText = document.getElementById('statusText');
+
+    // Fluent Design Cursor Reveal Lighting
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    });
+
+    // Update Slider Value
+    volSlider.addEventListener('input', (e) => {
+      volValue.textContent = `${e.target.value}%`;
+    });
+
+    // Toggle Power Button & Physical LED
+    powerBtn.addEventListener('click', () => {
+      const isOn = powerBtn.classList.toggle('pressed');
+      led.classList.toggle('active', isOn);
+      statusText.textContent = isOn ? 'ON' : 'OFF';
+    });
+
+    // Toggle Bass Boost Latch
+    bassBtn.addEventListener('click', () => {
+      bassBtn.classList.toggle('pressed');
+    });
+  </script>
+</body>
+</html>
